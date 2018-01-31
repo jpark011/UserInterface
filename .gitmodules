@@ -1,0 +1,3 @@
+[submodule "cs349_w18_examples"]
+	path = cs349_w18_examples
+	url = https://git.uwaterloo.ca/kkatsura/cs349_w18_examples
