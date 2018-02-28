@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.ItemSelectable;
+import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -75,7 +76,7 @@ class Controller {
                 // Select
                 if (btn.isSelected()) {
                     model.changeMode(Mode.DRAW);
-                // Unselect
+                    // Unselect
                 } else {
                     model.changeMode(Mode.SELECT);
                 }
@@ -102,7 +103,9 @@ class Controller {
             public void actionPerformed(ActionEvent e) {
                 JComboBox<Shape> comboBox = (JComboBox<Shape>) e.getSource();
                 Shape selected = (Shape) comboBox.getSelectedItem();
-                model.changeShape(selected);
+                if (selected != null) {
+                    model.changeShape(selected);
+                }
             }
         };
 
@@ -112,7 +115,9 @@ class Controller {
             public void actionPerformed(ActionEvent e) {
                 JComboBox<StrokeWidth> comboBox = (JComboBox<StrokeWidth>) e.getSource();
                 StrokeWidth selected = (StrokeWidth) comboBox.getSelectedItem();
-                model.changeWidth(selected);
+                if (selected != null) {
+                    model.changeWidth(selected);
+                }
             }
         };
 
@@ -136,7 +141,7 @@ class Controller {
         deleteButton = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                model.deleteSelected();
             }
         };
 

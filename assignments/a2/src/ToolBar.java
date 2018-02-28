@@ -93,6 +93,5 @@ public class ToolBar extends JToolBar implements Observer {
         // update colors
         fillColorIcon.setColor(model.getFillColor());
         strokeColorIcon.setColor(model.getStrokeColor());
-
     }
 }

@@ -42,15 +42,45 @@ public class Canvas extends JPanel implements Observer {
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
 
-                pressed = true;
+                switch(model.getMode()) {
+                case DRAW:
+                    pressed = true;
 
-                C.x = e.getX();
-                C.y = e.getY();
+                    C.x = e.getX();
+                    C.y = e.getY();
 
-                M.x = C.x;
-                M.y = C.y;
+                    M.x = C.x;
+                    M.y = C.y;
 
-                trace = new ArrayList<>();
+                    trace = new ArrayList<>();
+
+                    break;
+                case SELECT:
+                    ArrayList<Drawable> drawables = model.getDrawables();
+                    Point p = new Point(e.getX(), e.getY());
+
+                    // iterate reverse since i want to select the most recent one!
+                    int i = drawables.size() - 1;
+                    while (0 <= i) {
+                        if (drawables.get(i).hitTest(p)) {
+                            // deselect
+                            if (drawables.get(i).equals(model.getSelected())) {
+                                model.selectShape(-1);
+                            // select
+                            } else {
+                                model.selectShape(i);
+                            }
+                            break;
+                        }
+                        i--;
+                    }
+
+                    if (i < 0) {
+                        model.selectShape(-1);
+                    }
+
+                    break;
+                }
 
                 repaint();
             }
@@ -58,30 +88,37 @@ public class Canvas extends JPanel implements Observer {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                Shape shape = model.getShape();
-                Color fillColor = model.getFillColor();
-                Color strokeColor = model.getStrokeColor();
-                int width = model.getWidth();
 
-                pressed = false;
+                switch (model.getMode()) {
+                case DRAW:
+                    Shape shape = model.getShape();
+                    Color fillColor = model.getFillColor();
+                    Color strokeColor = model.getStrokeColor();
+                    int width = model.getWidth();
 
-                switch (shape) {
-                    case FREEFORM:
-                        model.addDrawable(new FreeForm(fillColor, strokeColor, width,
-                                trace));
-                        break;
-                    case STRAIGHT_LINE:
-                        model.addDrawable(new StraightLine(fillColor, strokeColor, width,
-                                C.x, C.y, M.x, M.y));
-                        break;
-                    case RECTANGLE:
-                        model.addDrawable(new Rectangle(fillColor, strokeColor, width,
-                                C.x, C.y, M.x, M.y));
-                        break;
-                    case ELLIPSE:
-                        model.addDrawable(new Ellipse(fillColor, strokeColor, width,
-                                C.x, C.y, M.x, M.y));
-                        break;
+                    pressed = false;
+
+                    switch (shape) {
+                        case FREEFORM:
+                            model.addDrawable(new FreeForm(fillColor, strokeColor, width,
+                                    trace));
+                            break;
+                        case STRAIGHT_LINE:
+                            model.addDrawable(new StraightLine(fillColor, strokeColor, width,
+                                    C.x, C.y, M.x, M.y));
+                            break;
+                        case RECTANGLE:
+                            model.addDrawable(new Rectangle(fillColor, strokeColor, width,
+                                    C.x, C.y, M.x, M.y));
+                            break;
+                        case ELLIPSE:
+                            model.addDrawable(new Ellipse(fillColor, strokeColor, width,
+                                    C.x, C.y, M.x, M.y));
+                            break;
+                    }
+                    break;
+                case SELECT:
+                    break;
                 }
             }
         });
@@ -92,10 +129,16 @@ public class Canvas extends JPanel implements Observer {
             public void mouseDragged(MouseEvent e) {
                 super.mouseDragged(e);
 
-                M.x = e.getX();
-                M.y = e.getY();
+                switch (model.getMode()) {
+                    case DRAW:
+                        M.x = e.getX();
+                        M.y = e.getY();
 
-                trace.add(new Point(M.x, M.y));
+                        trace.add(new Point(M.x, M.y));
+                        break;
+                    case SELECT:
+                        break;
+                }
 
                 repaint();
             }
@@ -115,6 +158,13 @@ public class Canvas extends JPanel implements Observer {
 
         for (Drawable d : drawables) {
             d.draw(g);
+        }
+
+        // Draw select outline
+        Drawable selected = model.getSelected();
+
+        if (selected != null) {
+            selected.getBoundary().draw(g);
         }
 
         // draw currently drawn shape

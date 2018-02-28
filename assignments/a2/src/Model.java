@@ -37,6 +37,11 @@ public class Model {
     private Color fillColor;
     private Color strokeColor;
 
+    // TMP STATE
+    private int tmp_width;
+    private Color tmp_fillColor;
+    private Color tmp_strokeColor;
+
     // SHAPES
     private ArrayList<Drawable> drawables;
 
@@ -56,6 +61,10 @@ public class Model {
         this.width = 1;
         this.fillColor = Color.WHITE;
         this.strokeColor = Color.BLACK;
+
+        tmp_width = width;
+        tmp_fillColor = fillColor;
+        tmp_strokeColor = strokeColor;
 
         drawables = null;
         this.drawables = new ArrayList<>();
@@ -170,6 +179,9 @@ public class Model {
 
     void changeMode(Mode mode) {
         this.mode = mode;
+        if (mode == Mode.DRAW) {
+            selectShape(-1);
+        }
         notifyObservers();
     }
 
@@ -180,20 +192,62 @@ public class Model {
 
     void changeWidth(StrokeWidth width) {
         this.width = width.width;
+        if (selected != null) {
+            selected.setWidth(width.width);
+        }
         notifyObservers();
     }
 
     void changeFillColor(Color color) {
         this.fillColor = color;
+        if (selected != null) {
+            selected.setFillColor(color);
+        }
         notifyObservers();
     }
 
     void changeStrokeColor(Color color) {
         this.strokeColor = color;
+        if (selected != null) {
+            selected.setStrokeColor(color);
+        }
         notifyObservers();
     }
 
     boolean hasShapes() {
         return drawables.size() > 0;
+    }
+
+    void selectShape(int index) {
+        // unselect
+        if (index < 0) {
+            selected = null;
+            // restore
+            fillColor = tmp_fillColor;
+            strokeColor = tmp_strokeColor;
+            width = tmp_width;
+        } else {
+            selected = drawables.get(index);
+            // store tmp
+            tmp_fillColor = fillColor;
+            tmp_strokeColor = strokeColor;
+            tmp_width = width;
+
+            // set value
+            fillColor = selected.getFillColor();
+            strokeColor = selected.getStrokeColor();
+            width = selected.getWidth();
+        }
+        notifyObservers();
+    }
+
+    Drawable getSelected() {
+        return selected;
+    }
+
+    void deleteSelected() {
+        drawables.remove(selected);
+        selected = null;
+        notifyObservers();
     }
 }
