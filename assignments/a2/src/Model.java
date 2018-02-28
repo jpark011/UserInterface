@@ -91,12 +91,17 @@ public class Model {
         StringBuilder sb = new StringBuilder();
 
         sb.append("mode: " + mode.name());
-        sb.append("shape: " + shape);
-        sb.append("width: " + width);
-        sb.append("fillColor: " + fillColor);
-        sb.append("strokeColor: " + strokeColor);
+        sb.append("\nshape: " + shape);
+        sb.append("\nwidth: " + width);
+        sb.append("\nfillColor: " + fillColor);
+        sb.append("\nstrokeColor: " + strokeColor);
 
         return sb.toString();
+    }
+
+    void reset() {
+        init();
+        notifyObservers();
     }
 
     public int getNumWidths() {
@@ -178,8 +183,17 @@ public class Model {
         notifyObservers();
     }
 
-    void reset() {
-        init();
+    void changeFillColor(Color color) {
+        this.fillColor = color;
         notifyObservers();
+    }
+
+    void changeStrokeColor(Color color) {
+        this.strokeColor = color;
+        notifyObservers();
+    }
+
+    boolean hasShapes() {
+        return drawables.size() > 0;
     }
 }

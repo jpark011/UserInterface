@@ -17,6 +17,16 @@ public class MenuBar extends JMenuBar implements Observer {
     private String[][] menuItems;
     private int numWidths;
 
+    private JCheckBoxMenuItem selectCheckBox;
+    private JCheckBoxMenuItem drawCheckBox;
+
+    private JMenuItem deleteButton;
+    private JMenuItem transformButton;
+
+    private ColorIcon fillColorIcon;
+    private ColorIcon strokeColorIcon;
+    private JCheckBoxMenuItem[] widthMenuItem;
+
 
     MenuBar(Model model, Controller controller) {
         this.model = model;
@@ -31,53 +41,94 @@ public class MenuBar extends JMenuBar implements Observer {
     }
 
     private void buildUI(Controller controller) {
-        // Build menuBar
-        for (int i=0; i < menus.length; i++) {
-            JMenu menu = new JMenu(menus[i]);
-            for (int j=0; j < menuItems[i].length; j++) {
-                JMenuItem menuItem;
-                // Stroke Width has children
-                if (menuItems[i][j].equals("Stroke Width")) {
-                    menuItem = new JMenu(menuItems[i][j]);
-                    for (int k=1; k <= model.getNumWidths(); k++) {
-                        JCheckBoxMenuItem subMenuItem = new JCheckBoxMenuItem(k+"px");
-                        menuItem.add(subMenuItem);
-                    }
-                    // regular menuItems
-                } else {
-                    menuItem = new JMenuItem(menuItems[i][j]);
+        JMenu menu, subMenu;
+        JMenuItem menuItem;
 
-                    switch (menuItems[i][j]) {
-                        case "New":
-                            menuItem.addActionListener(controller.newFile);
-                            break;
-                        case "Exit":
-                            menuItem.addActionListener(controller.exitFile);
-                            break;
-                        case "Selection Mode":
-                            menuItem.addActionListener(controller.selectMenuItem);
-                            break;
-                        case "Drawing Mode":
-                            menuItem.addActionListener(controller.drawMenuItem);
-                            break;
-                        case "Delete":
-                            break;
-                        case "Transform":
-                            break;
-                        case "Fill Colour":
-                            break;
-                        case "Stroke Colour":
-                            break;
-                    }
-                }
-                menu.add(menuItem);
-            }
-            this.add(menu);
+        // File Menu
+        menu = new JMenu("File");
+
+        menuItem = new JMenuItem("New");
+        menuItem.addActionListener(controller.newFile);
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Exit");
+        menuItem.addActionListener(controller.exitFile);
+        menu.add(menuItem);
+
+        this.add(menu);
+
+        // Edit Menu
+        menu = new JMenu("Edit");
+
+        selectCheckBox = new JCheckBoxMenuItem("Selection Mode");
+        selectCheckBox.addActionListener(controller.selectToggleButton);
+        menu.add(selectCheckBox);
+
+        drawCheckBox = new JCheckBoxMenuItem("Drawing Mode");
+        drawCheckBox.addActionListener(controller.drawToggleButton);
+        menu.add(drawCheckBox);
+
+        deleteButton = new JMenuItem("Delete");
+        deleteButton.addActionListener(controller.deleteButton);
+        menu.add(deleteButton);
+
+        transformButton = new JMenuItem("Transform");
+        transformButton.addActionListener(controller.transformButton);
+        menu.add(transformButton);
+
+        this.add(menu);
+
+        // Format Menu
+        menu = new JMenu("Format");
+
+        subMenu = new JMenu("Stroke Width");
+        int numWidths = model.getNumWidths();
+        widthMenuItem = new JCheckBoxMenuItem[numWidths];
+        // create width menuitems
+        for (int k=1; k <= numWidths; k++) {
+            widthMenuItem[k-1] = new JCheckBoxMenuItem(new StrokeWidth(k).toString());
+            widthMenuItem[k-1].addActionListener(controller.widthCheckBox);
+            subMenu.add(widthMenuItem[k-1]);
         }
+        menu.add(subMenu);
+
+        fillColorIcon = new ColorIcon(model.getFillColor(), 10, 10);
+        menuItem = new JMenuItem("Fill Colour", fillColorIcon);
+        menuItem.addActionListener(controller.fillColorChanger);
+        menu.add(menuItem);
+
+        strokeColorIcon = new ColorIcon(model.getStrokeColor(), 10, 10);
+        menuItem = new JMenuItem("Stroke Colour", strokeColorIcon);
+        menuItem.addActionListener(controller.strokeColorChanger);
+        menu.add(menuItem);
+
+        this.add(menu);
+
     }
 
     @Override
     public void update(Object observable) {
+        // Select & Draw mode
+        selectCheckBox.setState(model.getMode() == Mode.SELECT);
+        drawCheckBox.setState(model.getMode() == Mode.DRAW);
+
+        // Stroke width checkboxes
+        for (int i = 0; i < widthMenuItem.length; i++) {
+            widthMenuItem[i].setState(model.getWidth() == i+1);
+        }
+
+        // update colors
+        fillColorIcon.setColor(model.getFillColor());
+        strokeColorIcon.setColor(model.getStrokeColor());
+
+        // Delete & Transform
+        if (model.hasShapes()) {
+            deleteButton.setEnabled(true);
+            transformButton.setEnabled(true);
+        } else {
+            deleteButton.setEnabled(false);
+            transformButton.setEnabled(false);
+        }
 
     }
 }

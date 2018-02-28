@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -17,6 +18,16 @@ public class ToolBar extends JToolBar implements Observer {
 
     private JToggleButton selectButton;
     private JToggleButton drawButton;
+
+    private JComboBox<Shape> shapeDropDown;
+    private JComboBox<StrokeWidth> widthDropDown;
+
+    private JButton fillColorButton;
+    private JButton strokeColorButton;
+
+    private ColorIcon fillColorIcon;
+    private ColorIcon strokeColorIcon;
+
 
     ToolBar(Model model, Controller controller) {
         this.model = model;
@@ -41,7 +52,7 @@ public class ToolBar extends JToolBar implements Observer {
         this.add(drawButton);
 
         // Share dropdown
-        JComboBox<Shape> shapeDropDown = new JComboBox<Shape>(shapes);
+        shapeDropDown = new JComboBox<Shape>(shapes);
         shapeDropDown.addActionListener(controller.shapeDropDown);
         this.add(shapeDropDown);
 
@@ -50,9 +61,21 @@ public class ToolBar extends JToolBar implements Observer {
         for (int i = 1; i <= numWidths; i++) {
             widths[i-1] = new StrokeWidth(i);
         }
-        JComboBox<StrokeWidth> widthDropDown = new JComboBox<>(widths);
+        widthDropDown = new JComboBox<>(widths);
         widthDropDown.addActionListener(controller.widthDropDown);
         this.add(widthDropDown);
+
+        // Fill color button
+        fillColorIcon = new ColorIcon(model.getFillColor(), 20, 20);
+        fillColorButton = new JButton("Fill Color", fillColorIcon);
+        fillColorButton.addActionListener(controller.fillColorChanger);
+        this.add(fillColorButton);
+
+        // Stroke color button
+        strokeColorIcon = new ColorIcon(model.getStrokeColor(), 20, 20);
+        strokeColorButton = new JButton("Stroke Color", strokeColorIcon);
+        strokeColorButton.addActionListener(controller.strokeColorChanger);
+        this.add(strokeColorButton);
     }
 
     @Override
@@ -62,6 +85,14 @@ public class ToolBar extends JToolBar implements Observer {
         Mode mode = model.getMode();
         selectButton.setSelected(mode == Mode.SELECT);
         drawButton.setSelected(mode == Mode.DRAW);
+
+        // update drop downs
+        shapeDropDown.setSelectedItem(model.getShape());
+        widthDropDown.setSelectedIndex(model.getWidth() -1);
+
+        // update colors
+        fillColorIcon.setColor(model.getFillColor());
+        strokeColorIcon.setColor(model.getStrokeColor());
 
     }
 }

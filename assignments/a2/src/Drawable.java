@@ -45,6 +45,11 @@ class StrokeWidth {
         this.width = width;
     }
 
+    // in the form of "XXXpx"
+    StrokeWidth(String width) {
+        this.width = Integer.parseInt(width.substring(0, width.length()- 2));
+    }
+
     @Override
     public String toString() {
         return width + "px";

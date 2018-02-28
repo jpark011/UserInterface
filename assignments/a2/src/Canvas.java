@@ -34,6 +34,8 @@ public class Canvas extends JPanel implements Observer {
     }
 
     private void buildUI() {
+        this.setBackground(Color.WHITE);
+
         // click listener
         this.addMouseListener(new MouseAdapter() {
             @Override
