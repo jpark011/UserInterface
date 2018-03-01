@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JToggleButton;
@@ -42,12 +43,12 @@ public class ToolBar extends JToolBar implements Observer {
 
     private void buildUI(Controller controller) {
         // Select Mode button
-        selectButton = new JToggleButton("Select");
+        selectButton = new JToggleButton("Select", new ImageIcon("cursor.png"));
         selectButton.addActionListener(controller.selectToggleButton);
         this.add(selectButton);
 
         // Draw Mode button
-        drawButton = new JToggleButton("Draw");
+        drawButton = new JToggleButton("Draw", new ImageIcon("brush.png"));
         drawButton.addActionListener(controller.drawToggleButton);
         this.add(drawButton);
 

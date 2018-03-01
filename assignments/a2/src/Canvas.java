@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -62,9 +63,20 @@ public class Canvas extends JPanel implements Observer {
                     // iterate reverse since i want to select the most recent one!
                     int i = drawables.size() - 1;
                     while (0 <= i) {
-                        if (drawables.get(i).hitTest(p)) {
+                        Drawable target = drawables.get(i);
+                        AffineTransform inverse = null;
+                        try {
+                             inverse = target.getTransform().createInverse();
+                        } catch (Exception ex) {
+                            System.out.println("Inverse failed!!!!!!!!!!");
+                            ex.printStackTrace();
+                        }
+                        Point transP = new Point();
+                        inverse.transform(p, transP);
+
+                        if (target.hitTest(transP)) {
                             // deselect
-                            if (drawables.get(i).equals(model.getSelected())) {
+                            if (target.equals(model.getSelected())) {
                                 model.selectShape(-1);
                             // select
                             } else {

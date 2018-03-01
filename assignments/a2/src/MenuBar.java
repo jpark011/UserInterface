@@ -142,7 +142,7 @@ public class MenuBar extends JMenuBar implements Observer {
         strokeColorIcon.setColor(model.getStrokeColor());
 
         // Delete & Transform
-        if (model.hasShapes()) {
+        if (model.getSelected() != null) {
             deleteButton.setEnabled(true);
             transformButton.setEnabled(true);
         } else {

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -14,6 +15,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JToggleButton;
@@ -148,7 +150,16 @@ class Controller {
         transformButton = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                AffineTransform orig = model.getSelected().getTransform();
+                TransformDialog dialog = new TransformDialog(orig);
 
+                dialog.setVisible(true);
+                AffineTransform result = dialog.getTransform();
+
+                // if changed (OK button is pressed)
+                if (result != null) {
+                    model.changeTransform(result);
+                }
             }
         };
     }

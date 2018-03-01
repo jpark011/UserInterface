@@ -1,5 +1,6 @@
 
 import java.awt.Color;
+import java.awt.geom.AffineTransform;
 import java.util.*;
 
 enum Mode {
@@ -93,7 +94,7 @@ public class Model {
             observer.update(this);
         }
 
-        System.out.println(this);
+//        System.out.println(this);
     }
 
     public String toString() {
@@ -248,6 +249,11 @@ public class Model {
     void deleteSelected() {
         drawables.remove(selected);
         selected = null;
+        notifyObservers();
+    }
+
+    void changeTransform(AffineTransform transform) {
+        selected.setTransform(transform) ;
         notifyObservers();
     }
 }

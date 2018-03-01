@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -66,11 +67,13 @@ abstract class Drawable {
     protected Color strokeColor;
     protected int width;
     protected final Color TRANSPARENT = new Color(0,0,0,0);
+    protected AffineTransform transform;
 
     Drawable(Color fillColor, Color strokeColor, int width) {
         this.fillColor = fillColor;
         this.strokeColor = strokeColor;
         this.width = width;
+        this.transform = new AffineTransform();
     }
 
     abstract void draw(Graphics g);
@@ -100,6 +103,14 @@ abstract class Drawable {
     public Color getFillColor() {
         return fillColor;
     }
+
+    public AffineTransform getTransform() {
+        return transform;
+    }
+
+    public void setTransform(AffineTransform transform) {
+        this.transform = transform;
+    }
 }
 
 class FreeForm extends Drawable {
@@ -115,6 +126,10 @@ class FreeForm extends Drawable {
     void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
 
+        // save prev transform and set it to this's transform
+        AffineTransform save = g2d.getTransform();
+        g2d.setTransform(transform);
+
         // outline
         g2d.setStroke(new BasicStroke(width));
         g2d.setColor(strokeColor);
@@ -124,6 +139,9 @@ class FreeForm extends Drawable {
             Point p2 = points.get(i);
             g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
         }
+
+        // restore prev transform
+        g2d.setTransform(save);
     }
 
     @Override
@@ -142,29 +160,40 @@ class FreeForm extends Drawable {
     @Override
     Rectangle getBoundary() {
         int n = points.size();
-        ArrayList<Point> xPoints = (ArrayList<Point>) points.clone();
-        ArrayList<Point> yPoints = (ArrayList<Point>) points.clone();
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
 
-        xPoints.sort(new Comparator<Point>() {
-            @Override
-            public int compare(Point o1, Point o2) {
-                return o1.x - o2.x;
-            }
-        });
+        for (Point p : points) {
+            if (p.x < minX) minX = p.x;
+            if (p.y < minY) minY = p.y;
+            if (maxX < p.x) maxX = p.x;
+            if (maxY < p.y) maxY = p.y;
+        }
+//        ArrayList<Point> xPoints = (ArrayList<Point>) points.clone();
+//        ArrayList<Point> yPoints = (ArrayList<Point>) points.clone();
+//
+//        xPoints.sort(new Comparator<Point>() {
+//            @Override
+//            public int compare(Point o1, Point o2) {
+//                return o1.x - o2.x;
+//            }
+//        });
+//
+//        yPoints.sort(new Comparator<Point>() {
+//            @Override
+//            public int compare(Point o1, Point o2) {
+//                return o1.y - o2.y;
+//            }
+//        });
 
-        yPoints.sort(new Comparator<Point>() {
-            @Override
-            public int compare(Point o1, Point o2) {
-                return o1.y - o2.y;
-            }
-        });
+        int x = minX;
+        int y = minY;
+        int w = maxX - minX;
+        int h = maxY - minY;
 
-        int x = xPoints.get(0).x;
-        int y = yPoints.get(0).y;
-        int w = Math.abs(x - xPoints.get(n-1).x);
-        int h = Math.abs(y - yPoints.get(n-1).y);
-
-        return new Rectangle(TRANSPARENT, Color.CYAN, 3, x, y, x+w, y+h);
+        return new Rectangle(TRANSPARENT, Color.CYAN, 3, x, y, x+w, y+h, transform);
     }
 }
 
@@ -189,10 +218,17 @@ class StraightLine extends Drawable {
     void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
 
+        // save prev transform and set it to this's transform
+        AffineTransform save = g2d.getTransform();
+        g2d.setTransform(transform);
+
         // outline
         g2d.setStroke(new BasicStroke(width));
         g2d.setColor(strokeColor);
         g2d.drawLine(x1, y1, x2, y2);
+
+        // restore prev transform
+        g2d.setTransform(save);
     }
 
     @Override
@@ -207,7 +243,7 @@ class StraightLine extends Drawable {
         int w = Math.abs(x1 - x2);
         int h = Math.abs(y1 - y2);
 
-        return new Rectangle(TRANSPARENT, Color.CYAN, 3, x, y, x+w, y+h);
+        return new Rectangle(TRANSPARENT, Color.CYAN, 3, x, y, x+w, y+h, transform);
     }
 }
 
@@ -232,9 +268,19 @@ class Rectangle extends Drawable {
         this.h = h;
     }
 
+    Rectangle(Color fillColor, Color strokeColor, int width,
+              int x1, int y1, int x2, int y2, AffineTransform transform) {
+        this(fillColor, strokeColor, width, x1, y1, x2, y2);
+        this.transform = transform;
+    }
+
     @Override
     void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
+
+        // save prev transform and set it to this's transform
+        AffineTransform save = g2d.getTransform();
+        g2d.setTransform(transform);
 
         // fill
         g2d.setColor(fillColor);
@@ -244,6 +290,9 @@ class Rectangle extends Drawable {
         g2d.setStroke(new BasicStroke(width));
         g2d.setColor(strokeColor);
         g2d.drawRect(x, y, w, h);
+
+        // restore prev transform
+        g2d.setTransform(save);
     }
 
     @Override
@@ -256,7 +305,7 @@ class Rectangle extends Drawable {
 
     @Override
     Rectangle getBoundary() {
-        return new Rectangle(TRANSPARENT, Color.CYAN, 3, x, y, x+w, y+h);
+        return new Rectangle(TRANSPARENT, Color.CYAN, 3, x, y, x+w, y+h, transform);
     }
 }
 
@@ -285,6 +334,10 @@ class Ellipse extends Drawable {
     void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
 
+        // save prev transform and set it to this's transform
+        AffineTransform save = g2d.getTransform();
+        g2d.setTransform(transform);
+
         // fill
         g2d.setColor(fillColor);
         g2d.fillOval(x, y, w, h);
@@ -292,6 +345,9 @@ class Ellipse extends Drawable {
         g2d.setStroke(new BasicStroke(width));
         g2d.setColor(strokeColor);
         g2d.drawOval(x, y, w, h);
+
+        // restore prev transform
+        g2d.setTransform(save);
     }
 
     @Override
@@ -308,7 +364,7 @@ class Ellipse extends Drawable {
 
     @Override
     Rectangle getBoundary() {
-        return new Rectangle(TRANSPARENT, Color.CYAN, 3, x, y, x+w, y+h);
+        return new Rectangle(TRANSPARENT, Color.CYAN, 3, x, y, x+w, y+h, transform);
     }
 }
 
