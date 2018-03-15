@@ -43,5 +43,7 @@ public class ToolbarView extends JToolBar implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         duplicate.setEnabled(model.hasSelected());
+        undo.setEnabled(model.canUndo());
+        redo.setEnabled(model.canRedo());
     }
 }

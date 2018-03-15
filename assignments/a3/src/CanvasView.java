@@ -79,7 +79,8 @@ public class CanvasView extends JPanel implements Observer {
                         break;
                     case HANDLE:
                         Point center = orig.getCenter();
-                        double angle = calcAngle(center, (Point)lastMouse);//.atan2(lastMouse.getY() - center.getY(), lastMouse.getX() - center.getX());
+                        // return angle between 2 points in radian
+                        double angle = Math.atan2(lastMouse.getY() - center.getY(), lastMouse.getX() - center.getX()) + Math.PI/2;
                         orig.changeShape(angle);
                         model.selectShape(orig);
                         break;
@@ -146,18 +147,11 @@ public class CanvasView extends JPanel implements Observer {
         }
     }
 
-    // return angle between 2 points in radian
-    private double calcAngle(Point p1, Point p2) {
-        return Math.acos((p2.getY() - p1.getY()) / Math.sqrt(
-                Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2)
-        ));
-    }
-
     // trans & rotate & trans-back
     private void rotate(Graphics2D g2, ShapeModel shape) {
-        g2.translate(-shape.getCenter().x, -shape.getCenter().y);
-        g2.rotate(shape.rotation);
         g2.translate(shape.getCenter().x, shape.getCenter().y);
+        g2.rotate(shape.rotation);
+        g2.translate(-shape.getCenter().x, -shape.getCenter().y);
     }
 
     private void drawAllShapes(Graphics2D g2) {

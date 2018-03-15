@@ -1,9 +1,14 @@
 import java.util.*;
 import java.util.List;
 
+import javax.swing.undo.UndoManager;
+
 public class DrawingModel extends Observable {
 
     private List<ShapeModel> shapes = new ArrayList<>();
+
+    // UNDO
+    UndoManager undoManager = new UndoManager();
 
     // need when selected
     private ShapeModel selected = null;
@@ -72,5 +77,25 @@ public class DrawingModel extends Observable {
         ShapeModel duplicate = selected.clone();
         addShape(duplicate);
         selectShape(duplicate);
+    }
+
+    public void undo() {
+        if (canUndo()) {
+            undoManager.undo();
+        }
+    }
+
+    public void redo() {
+        if (canRedo()) {
+            undoManager.redo();
+        }
+    }
+
+    public boolean canUndo() {
+        return undoManager.canUndo();
+    }
+
+    public boolean canRedo() {
+        return undoManager.canRedo();
     }
 }

@@ -64,12 +64,15 @@ public class ShapeModel implements Serializable {
         return shape;
     }
 
+    // scale OR translation
     public void changeShape(Point startPoint, Point endPoint) {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
     }
 
+    // rotate
     public void changeShape(double rotation) {
+        
         this.rotation = rotation;
     }
 
@@ -79,7 +82,9 @@ public class ShapeModel implements Serializable {
         AffineTransform inverse = null;
         try {
             AffineTransform orig = new AffineTransform();
+            orig.translate(this.getCenter().x, this.getCenter().y);
             orig.rotate(rotation);
+            orig.translate(-this.getCenter().x, -this.getCenter().y);
             inverse = orig.createInverse();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -97,7 +102,7 @@ public class ShapeModel implements Serializable {
         Point endPoint = new Point(
                 startPoint.x + SIZE,
                 startPoint.y + SIZE);
-        return new RectangleModel(startPoint, endPoint);
+        return new ScaleBoxModel(startPoint, endPoint, this);
     }
 
     public ShapeModel getRotateHandle() {
@@ -108,7 +113,7 @@ public class ShapeModel implements Serializable {
         Point endPoint = new Point(
                 startPoint.x + SIZE,
                 startPoint.y + SIZE);
-        return new EllipseModel(startPoint, endPoint);
+        return new RotateHandleModel(startPoint, endPoint, this);
     }
 
     /**

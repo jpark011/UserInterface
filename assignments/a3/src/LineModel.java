@@ -17,6 +17,11 @@ public class LineModel extends ShapeModel {
         this.shape = path;
     }
 
+    public LineModel(Point startPoint, Point endPoint, double rotation) {
+        this(startPoint, endPoint);
+        this.rotation = rotation;
+    }
+
     @Override
     public boolean hitTest(Point2D p) {
         return pointToLineDistance(a,b,(Point) p) < 10;
