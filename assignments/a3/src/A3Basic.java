@@ -15,6 +15,8 @@ public class A3Basic extends JPanel {
         JFrame frame = new JFrame("CS349 W18 A3");
         frame.setSize(800,600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Relative location set
+        frame.setLocationRelativeTo(null);
         frame.setContentPane(new A3Basic());
         frame.setVisible(true);
     }

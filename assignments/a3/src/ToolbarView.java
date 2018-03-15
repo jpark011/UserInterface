@@ -1,4 +1,6 @@
 import javax.swing.*;
+
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
@@ -28,11 +30,18 @@ public class ToolbarView extends JToolBar implements Observer {
             add(button);
         }
 
+        duplicate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                model.duplicateShape();
+            }
+        });
+
         this.update(null, null);
     }
 
     @Override
     public void update(Observable o, Object arg) {
-
+        duplicate.setEnabled(model.hasSelected());
     }
 }

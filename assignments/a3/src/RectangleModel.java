@@ -10,4 +10,13 @@ public class RectangleModel extends ShapeModel {
 
         this.shape = rect;
     }
+
+    @Override
+    public void changeShape(Point startPoint, Point endPoint) {
+        super.changeShape(startPoint, endPoint);
+
+        Rectangle2D rect = new Rectangle2D.Double(startPoint.x,startPoint.y, endPoint.x - startPoint.x, endPoint.y - startPoint.y);
+
+        this.shape = rect;
+    }
 }

@@ -8,4 +8,13 @@ public class EllipseModel extends ShapeModel {
         rect.add(endPoint);
         this.shape = new Ellipse2D.Double(rect.x, rect.y, rect.width, rect.height);
     }
+
+    @Override
+    public void changeShape(Point startPoint, Point endPoint) {
+        super.changeShape(startPoint, endPoint);
+
+        Rectangle rect = new java.awt.Rectangle(startPoint);
+        rect.add(endPoint);
+        this.shape = new Ellipse2D.Double(rect.x, rect.y, rect.width, rect.height);
+    }
 }
