@@ -138,7 +138,6 @@ public class ShapeModel implements Serializable {
             try {
                 Class<? extends ShapeModel> clazz = shape.getClass();
                 Constructor<? extends ShapeModel> constructor = clazz.getConstructor(Point.class, Point.class);
-                System.out.println(clazz);
 
                 return constructor.newInstance(startPoint, endPoint);
             } catch (Exception e) {

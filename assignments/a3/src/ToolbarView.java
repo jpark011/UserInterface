@@ -2,6 +2,7 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,13 +30,21 @@ public class ToolbarView extends JToolBar implements Observer {
             button.addActionListener(drawingActionListener);
             add(button);
         }
+        undo.addActionListener(new UndoListener());
+        redo.addActionListener(new RedoListener());
+        duplicate.addActionListener(new DuplicateListener());
 
-        duplicate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                model.duplicateShape();
-            }
-        });
+        // just for shortcuts (NOT added to UI)
+        JMenuItem undoShortCut = new JMenuItem();
+        JMenuItem redoShortCut = new JMenuItem();
+
+        undoShortCut.setMnemonic(KeyEvent.VK_Z);
+        undoShortCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
+        undoShortCut.addActionListener(new UndoListener());
+
+        redoShortCut.setMnemonic(KeyEvent.VK_Y);
+        redoShortCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK));
+        redoShortCut.addActionListener(new RedoListener());
 
         this.update(null, null);
     }
@@ -45,5 +54,27 @@ public class ToolbarView extends JToolBar implements Observer {
         duplicate.setEnabled(model.hasSelected());
         undo.setEnabled(model.canUndo());
         redo.setEnabled(model.canRedo());
+    }
+
+    private class DuplicateListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            model.duplicateShape();
+
+        }
+    }
+
+    private class UndoListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            model.undo();
+        }
+    }
+
+    private class RedoListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            model.redo();
+        }
     }
 }

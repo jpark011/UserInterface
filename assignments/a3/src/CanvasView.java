@@ -44,10 +44,13 @@ public class CanvasView extends JPanel implements Observer {
                 // decide mode
                 if (model.getRotateHandle().hitTest(startMouse)) {
                     selectMode = SelectMode.HANDLE;
+                    model.saveShape();
                 } else if (model.getScaleBox().hitTest(startMouse)) {
                     selectMode = SelectMode.BOX;
+                    model.saveShape();
                 } else if (model.getSelected().hitTest(startMouse)) {
                     selectMode = SelectMode.SHAPE;
+                    model.saveShape();
                 } else {
                     selectMode = SelectMode.NONE;
                     model.unselectShape();
@@ -70,19 +73,16 @@ public class CanvasView extends JPanel implements Observer {
                         int offsetY = (int)(lastMouse.getY() - lastDragMouse.getY());
                         Point newStart = new Point(orig.startPoint.x + offsetX, orig.startPoint.y + offsetY);
                         Point newEnd = new Point(orig.endPoint.x + offsetX, orig.endPoint.y + offsetY);
-                        orig.changeShape(newStart, newEnd);
-                        model.selectShape(orig);
+                        model.changeShape(newStart, newEnd);
                         break;
                     case BOX:
-                        orig.changeShape(orig.startPoint, (Point)lastMouse);
-                        model.selectShape(orig);
+                        model.changeShape(orig.startPoint, (Point)lastMouse);
                         break;
                     case HANDLE:
                         Point center = orig.getCenter();
                         // return angle between 2 points in radian
                         double angle = Math.atan2(lastMouse.getY() - center.getY(), lastMouse.getX() - center.getX()) + Math.PI/2;
-                        orig.changeShape(angle);
-                        model.selectShape(orig);
+                        model.changeShape(angle);
                         break;
                 }
 
@@ -99,13 +99,15 @@ public class CanvasView extends JPanel implements Observer {
                         case NONE:
                             ShapeModel shape = new ShapeModel.ShapeFactory().getShape(model.getShape(), (Point) startMouse, (Point) lastMouse);
                             model.addShape(shape);
-                            model.selectShape(shape);
                             break;
                         case SHAPE:
+                            model.makeTransUndoable();
                             break;
                         case BOX:
+                            model.makeTransUndoable();
                             break;
                         case HANDLE:
+                            model.makeRotationUndoable();
                             break;
                     }
 

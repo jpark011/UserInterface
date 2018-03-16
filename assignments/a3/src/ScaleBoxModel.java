@@ -20,9 +20,6 @@ public class ScaleBoxModel extends RectangleModel {
         // first inverse the mouse location
         AffineTransform inverse = null;
         try {
-            System.out.println("ME: " + this);
-            System.out.println("PAR: " + parent);
-
             AffineTransform orig = new AffineTransform();
             // Move to the center of parent shape first
             orig.translate(-(this.getCenter().x - parent.getCenter().x), -(this.getCenter().y - parent.getCenter().y));
