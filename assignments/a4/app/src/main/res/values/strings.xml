@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">A4</string>
+
+    <!-- BUTTONS -->
+    <string name="next_button">Next</string>
+    <string name="prev_button">Previous</string>
+    <string name="logout_button">Logout</string>
+    <string name="load_button">Load</string>
+    <string name="finish_button">Finish</string>
+    <string name="topic_button">Topic Slection</string>
+
+    <!-- WELCOME PAGE -->
+    <string name="welcome_title">Quiz App</string>
+    <string name="welcome_name">Name</string>
+    <string name="welcome_copyright">Copyright hj8park</string>
+
+    <!-- SELECT PAGE -->
+    <string name="select_title">Topic Selection</string>
+    <string name="select_greeting">Welcome</string>
+    <string name="select_topic">Topic</string>
+    <string name="select_number"># of Questions</string>
+    <string name="select_topic1">World Flag</string>
+    <string-array name="select_number1">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <!-- QUESTION PAGE -->
+    <string name="question_title">Question</string>
+
+    <!-- RESULT PAGE -->
+    <string name="result_title">Results</string>
+    <string name="result_score">Your Score</string>
+
+</resources>
