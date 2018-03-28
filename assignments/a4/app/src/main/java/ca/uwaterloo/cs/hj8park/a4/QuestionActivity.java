@@ -91,6 +91,8 @@ public class QuestionActivity extends AppCompatActivity implements Observer, Que
         mCurNumText.setText((curNumQuestion + 1) + "/" + maxPage);
 
         mPrevButton.setEnabled(0 < curNumQuestion);
+        mPrevButton.setAlpha((0 < curNumQuestion)? 1 : 0.5f);
+
         if (curNumQuestion < maxPage - 1) {
             mNextButton.setText(getString(R.string.next_button));
         } else {

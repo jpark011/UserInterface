@@ -38,6 +38,7 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mNextButton.setEnabled( 0 < s.length() );
+                mNextButton.setAlpha((0 < s.length())? 1 : 0.5f);
             }
 
             @Override

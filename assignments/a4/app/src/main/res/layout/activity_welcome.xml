@@ -35,7 +35,7 @@
         android:id="@+id/copyrightTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginStart="8dp"
         android:text="@string/welcome_copyright"
         android:textSize="20sp"
@@ -51,6 +51,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/next_button"
         android:enabled="false"
+        android:alpha="0.5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
