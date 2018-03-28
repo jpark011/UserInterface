@@ -1,6 +1,7 @@
 package ca.uwaterloo.cs.hj8park.a4;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,46 +11,52 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.Buffer;
+import java.util.HashSet;
+import java.util.Set;
+
+import ca.uwaterloo.cs.hj8park.a4.fragment.LogoutFragment;
 import ca.uwaterloo.cs.hj8park.a4.model.Model;
 
-public class SelectActivity extends AppCompatActivity {
-    private Button mLogoutButton;
+public class SelectActivity extends AppCompatActivity  {
     private Button mLoadButton;
-    private TextView mTopicText;
     private Spinner mNumberSpinner1;
     private Model mModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
 
         mModel = Model.getInstance();
+        try {
+            mModel.setUpQuizzes(
+                    getResources(),
+                    getAssets().open("questions.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        mLogoutButton = findViewById(R.id.selectLogoutButton);
         mLoadButton = findViewById(R.id.selectLoadButton);
-        mTopicText = findViewById(R.id.selectTopicText);
         mNumberSpinner1 = findViewById(R.id.selectNumberSpinner1);
 
-        mTopicText.append(" " + mModel.getUserName());
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this, R.array.select_number1, R.layout.support_simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         mNumberSpinner1.setAdapter(adapter);
 
-        mLogoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mModel.reset();
-                Intent intent = new Intent(SelectActivity.this, WelcomeActivity.class);
-                startActivity(intent);
-            }
-        });
-
         mLoadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mModel.loadQuiz();
+                Intent intent = new Intent(SelectActivity.this, QuestionActivity.class);
+                startActivity(intent);
             }
         });
 

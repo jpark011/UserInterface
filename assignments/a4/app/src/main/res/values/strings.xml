@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">A4</string>
 
+    <string name="image_file">image</string>
+
     <!-- BUTTONS -->
     <string name="next_button">Next</string>
     <string name="prev_button">Previous</string>
@@ -34,5 +36,8 @@
     <!-- RESULT PAGE -->
     <string name="result_title">Results</string>
     <string name="result_score">Your Score</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

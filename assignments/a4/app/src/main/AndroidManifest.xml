@@ -20,9 +20,14 @@
         </activity>
         <activity
             android:name=".SelectActivity"
-            android:label="Topic Selection">
-
-        </activity>
+            android:label="Topic Selection" />
+        <activity
+            android:name=".QuestionActivity"
+            android:label="Question"
+            />
+        <activity
+            android:name=".ResultActivity"
+            android:label="Results"></activity>
     </application>
 
 </manifest>
