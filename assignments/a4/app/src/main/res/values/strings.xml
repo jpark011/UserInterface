@@ -36,6 +36,8 @@
     <!-- RESULT PAGE -->
     <string name="result_title">Results</string>
     <string name="result_score">Your Score</string>
+    <string name="result_time">Your Time</string>
+    <string name="result_answers">Answers</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

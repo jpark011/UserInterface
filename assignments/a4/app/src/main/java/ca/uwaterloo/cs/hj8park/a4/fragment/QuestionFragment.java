@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +32,10 @@ import ca.uwaterloo.cs.hj8park.a4.model.Quiz;
  */
 public class QuestionFragment extends Fragment {
     private static final String ARG_QUIZ = "quiz";
+    private static final String ARG_DISABLE = "disabled";
 
     private Quiz mQuiz;
+    private boolean mDisabled;
 
     private OnFragmentInteractionListener mListener;
 
@@ -47,10 +50,11 @@ public class QuestionFragment extends Fragment {
      * @param quiz the main param
      * @return A new instance of fragment QuestionFragment.
      */
-    public static QuestionFragment newInstance(Quiz quiz) {
+    public static QuestionFragment newInstance(Quiz quiz, boolean disabled) {
         QuestionFragment fragment = new QuestionFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_QUIZ, quiz);
+        args.putSerializable(ARG_DISABLE, disabled);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,6 +64,7 @@ public class QuestionFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mQuiz = (Quiz) getArguments().getSerializable(ARG_QUIZ);
+            mDisabled = getArguments().getBoolean(ARG_DISABLE);
         }
     }
 
@@ -82,7 +87,16 @@ public class QuestionFragment extends Fragment {
             for (int i = 0; i < group.getChildCount(); i++) {
                 CheckBox view = (CheckBox) group.getChildAt(i);
                 view.setText(mQuiz.candidates[i]);
-                view.setOnClickListener(new OnCheckBoxClicked());
+                if (!mDisabled) {
+                    view.setOnClickListener(new OnCheckBoxClicked());
+                // when it's disabled frag!
+                } else {
+                    // answer block
+                    if (mQuiz.isAnswer(i)) {
+                        view.setChecked(true);
+                    }
+                    view.setEnabled(false);
+                }
             }
         } else {
             fragView = inflater.inflate(R.layout.fragment_question_single, container, false);
@@ -96,7 +110,17 @@ public class QuestionFragment extends Fragment {
             for (int i = 0; i < group.getChildCount(); i++) {
                 RadioButton view = (RadioButton) group.getChildAt(i);
                 view.setText(mQuiz.candidates[i]);
-                view.setOnClickListener(new OnRadioButtonClicked());
+                if (!mDisabled) {
+                    view.setOnClickListener(new OnRadioButtonClicked());
+                    // when it's disabled frag!
+                } else {
+                    // answer block
+                    if (mQuiz.isAnswer(i)) {
+                        view.setChecked(true);
+                    }
+                    view.setEnabled(false);
+                }
+
             }
         }
 

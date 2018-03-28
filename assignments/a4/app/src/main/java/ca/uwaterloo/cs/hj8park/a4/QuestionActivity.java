@@ -27,11 +27,15 @@ public class QuestionActivity extends AppCompatActivity implements Observer, Que
     private Button mNextButton;
     private TextView mCurNumText;
     private QuestionFragment[] fragments;
+    private int startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
+
+        // Question time!
+        startTime = (int) System.currentTimeMillis() / 1000;
 
         mModel = Model.getInstance();
         mModel.addObserver(this);
@@ -41,7 +45,7 @@ public class QuestionActivity extends AppCompatActivity implements Observer, Que
 
         // init fragments needed
         for (int i = 0; i < numQs; i++) {
-            fragments[i] = QuestionFragment.newInstance(mModel.getQuiz(i));
+            fragments[i] = QuestionFragment.newInstance(mModel.getQuiz(i), false);
         }
 
         mContainerId = R.id.questionContainer;
@@ -67,7 +71,8 @@ public class QuestionActivity extends AppCompatActivity implements Observer, Que
                     mModel.nextPage();
                 // Finish
                 } else {
-                    mModel.calcScore();
+                    int endTime = (int) System.currentTimeMillis() / 1000;
+                    mModel.calcScore(endTime - startTime);
                     Intent intent = new Intent(QuestionActivity.this, ResultActivity.class);
                     startActivity(intent);
                 }

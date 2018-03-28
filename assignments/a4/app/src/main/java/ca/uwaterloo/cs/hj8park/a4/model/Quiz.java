@@ -39,19 +39,25 @@ public class Quiz implements Serializable {
         return this.type == QuizType.MULTIPLE;
     }
 
+    public boolean isAnswer(int answer) {
+        return this.answers.contains(answer);
+    }
+
     public boolean isCorrect(Set<Integer> userAnswers) {
+        // user input not match with answers
+        for (int ans : userAnswers) {
+            if (!this.isAnswer(ans)) {
+                return false;
+            }
+        }
+
         // all answers should be in user answers
         for (int ans : this.answers) {
             if (!userAnswers.contains(ans)) {
                 return false;
             }
         }
-        // user input not match with answers
-        for (int ans : userAnswers) {
-            if (!this.answers.contains(ans)) {
-                return false;
-            }
-        }
+
         return true;
     }
 }

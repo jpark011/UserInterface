@@ -28,12 +28,14 @@ public class Model extends Observable {
     private int curNumQuestion;     // directly related to UI shift
     private int score;
     private HashMap<Quiz, Set<Integer>> userAnswers;
+    private int timeSec;
 
     private Model() {
         userName = null;
         numQuestions1 = 0;
         curNumQuestion = 0;
         score = 0;
+        timeSec = 0;
         userAnswers = new HashMap<>();
     }
 
@@ -130,9 +132,10 @@ public class Model extends Observable {
         }
     }
 
-    public void calcScore() {
+    public void calcScore(int timeTaken) {
         // to prevent cheating!!
         this.score = 0;
+        this.timeSec = timeTaken;
         for (Quiz quiz : userAnswers.keySet()) {
             Set<Integer> userAnswer = userAnswers.get(quiz);
             if (quiz.isCorrect(userAnswer)) {
@@ -161,5 +164,9 @@ public class Model extends Observable {
 
     public int getScore() {
         return score;
+    }
+
+    public int getTime() {
+        return timeSec;
     }
 }
